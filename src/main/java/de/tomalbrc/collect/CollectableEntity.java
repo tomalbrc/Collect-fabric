@@ -3,8 +3,6 @@ package de.tomalbrc.collect;
 import eu.pb4.polymer.core.api.entity.PolymerEntity;
 import eu.pb4.polymer.virtualentity.api.attachment.EntityAttachment;
 import eu.pb4.polymer.virtualentity.api.tracker.EntityTrackedData;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -15,6 +13,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import xyz.nucleoid.packettweaker.PacketContext;
 
 import java.util.List;
@@ -48,14 +48,14 @@ public class CollectableEntity extends Entity implements PolymerEntity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compoundTag) {
-        compoundTag.read("Item", ItemStack.CODEC, NbtOps.INSTANCE).ifPresent(this.holder::setItem);
+    protected void readAdditionalSaveData(ValueInput compoundTag) {
+        compoundTag.read("Item", ItemStack.CODEC).ifPresent(this.holder::setItem);
         compoundTag.getInt("MaxCooldown").ifPresent(this.holder::setMaxCooldown);
         compoundTag.getInt("Cooldown").ifPresent(this.holder::setCooldown);
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compoundTag) {
+    protected void addAdditionalSaveData(ValueOutput compoundTag) {
         compoundTag.store("Item", ItemStack.CODEC, this.holder.getItem());
         compoundTag.putInt("MaxCooldown", this.holder.getMaxCooldown());
         compoundTag.putInt("Cooldown", this.holder.getCooldown());
